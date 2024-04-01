@@ -1,0 +1,38 @@
+
+YoY_SalesGrowth = 
+VAR PreviousYearSales =
+    CALCULATE(
+        [TotalSales],
+        DATEADD(Calender[Date], -1, YEAR)
+    )
+RETURN
+    IF(
+        ISBLANK(PreviousYearSales),
+        BLANK(),
+        DIVIDE(
+            [TotalSales] - PreviousYearSales,
+            PreviousYearSales
+        )
+    )
+
+----------------------------------------------------------
+ProfitMargin :=
+VAR TotalRevenue = SUM(GloabalSS[Sales])
+VAR TotalCost = SUM(GloabalSS[Cost])
+VAR TotalProfit = TotalRevenue - TotalCost
+
+RETURN
+    IF(
+        TotalRevenue > 0,
+        DIVIDE(TotalProfit, TotalRevenue),
+        BLANK()
+    )
+
+-----------------------------------------------------------------------
+AvgTotalSales Year =  AVERAGEX(VALUES(Calender[Date].[Year]),'Sheet2'[TotalSales])
+
+AvgLastYearSales Year = CALCULATE('Sheet2'[AvgTotalSales Year],SAMEPERIODLASTYEAR('Calender'[Date].[Date]))
+
+AvgYOYSales = 'Sheet2'[AvgTotalSales Year]-'Sheet2'[AvgLastYearSales Year]
+
+------------------------------------------------------------------------
